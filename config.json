@@ -1,0 +1,12 @@
+{
+    "name": "DASS 21",
+    "template":"survey",
+    "url":"https://www.github.com/earcanal/dass-21",
+    "exp_id": "dass-21",
+    "contributors": [ "Paul Sharpe" ],
+    "time": 3,
+    "reference": ["http://www.sciencedirect.com/science/article/pii/000579679400075U"],
+    "description": "Measures of depression, anxiety and stress.",
+    "instructions": "Please answer the questions to the best of your ability."
+}
+
