@@ -162,10 +162,7 @@ p {
 
 /* Add gray line for Likert */
 
-/* FIXME: Add class 'likert' to p elements that need the grey line, then use the selector:; */
-/* form p.likert:before { */
-/* FIXME: remove these ID hacks after issue #2 is resolved */
-form p#dass-21_1_options:before, form p#dass-21_2_options:before {
+form p.likert:before {
   content: '';
   position:relative;
   top:53px;
