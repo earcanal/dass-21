@@ -1,0 +1,70 @@
+#' Calculate Depression Anxiety Stress Scales - 21 (DASS-21) scores
+#'
+#' Calculates DASS-21 (Lovibond & Lovibond, 1995) scores.  Expects a data frame
+#' formatted by \code{\link[expfactoryr:process_expfactory_survey]{expfactoryr::process_expfactory_survey}}, containing
+#' responses from a single participant. Participant id \emph{must} be in column \code{p}.
+#'
+#' @examples
+#'
+#' dass21_df <- expand.grid(token = participants$token, survey = 'dass-21-results.json') %>%
+#'   rowwise() %>%
+#'   do(., expfactory::process_expfactory_survey(.$token, paste('data/', .$token, '_finished/', .$survey, sep=''),
+#'     flat=TRUE)) %>%
+#'     rename(p = Token)
+#'  process_dass21_data <- function(participant, df) {
+#'    return(expfactory.dass21::dass21(df %>% filter(p == participant)))
+#'  }
+#'  dass21 <- dass21_df %>%
+#'    rowwise() %>%
+#'    do(., process_dass21_data(.$p, dass21_df)) %>%
+#'    arrange(p)
+#'
+#' @param df Data frame
+#' @keywords depression, anxiety, stress, dass-21
+#' @export
+#' @return Data frame
+dass21 <- function(df) {
+  df <- mutate(df, value = as.integer(df$value))
+  dass_total <- sum(df$value)  # dass21 total
+
+  # Stress
+  stress <- c('I found it hard to wind down',
+            'I tended to over-react to situations',
+            'I felt that I was using a lot of nervous energy ', # note trailing space
+            'I found myself getting agitated',
+            'I found it difficult to relax',
+            'I was intolerant of anything that kept me from getting on with what I was doing',
+            'I felt that I was rather touchy'
+            )
+  stress <- df %>%
+    filter(question %in% stress)
+  dass21_stress <- sum(stress$value)
+
+  # Anxiety
+  anxiety <- c('I was aware of dryness of my mouth',
+            'I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)',
+            'I experienced trembling (e.g. in the hands)',
+            'I was worried about situations in which I might panic and make a fool of myself',
+            'I felt I was close to panic ',
+            'I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat) ',
+            'I felt scared without any good reason'
+            )
+  anxiety <- df %>%
+    filter(question %in% anxiety)
+  dass21_anxiety <- sum(anxiety$value)
+
+  # Anxiety
+  depression <- c("I couldn't seem to experience any positive feeling at all",
+               'I found it difficult to work up the initiative to do things',
+               'I felt that I had nothing to look forward to',
+               'I felt down-hearted and blue',
+               'I was unable to become enthusiastic about anything',
+               "I felt I wasn't worth much as a person",
+               'I felt that life was meaningless'
+  )
+  depression <- df %>%
+    filter(question %in% depression)
+  dass21_depression <- sum(depression$value)
+  
+  return(data.frame(p = df[1,'p'], dass21_stress, dass21_anxiety, dass21_depression))
+}
