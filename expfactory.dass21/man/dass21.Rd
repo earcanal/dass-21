@@ -18,7 +18,7 @@ formatted by \code{\link[expfactoryr:process_expfactory_survey]{expfactoryr::pro
 responses from a single participant. Participant id \emph{must} be in column \code{p}.
 }
 \examples{
-
+\dontrun{
 dass21_df <- expand.grid(token = participants$token, survey = 'dass-21-results.json') \%>\%
   rowwise() \%>\%
   do(., expfactory::process_expfactory_survey(.$token, paste('data/', .$token, '_finished/', .$survey, sep=''),
@@ -31,7 +31,7 @@ dass21_df <- expand.grid(token = participants$token, survey = 'dass-21-results.j
    rowwise() \%>\%
    do(., process_dass21_data(.$p, dass21_df)) \%>\%
    arrange(p)
-
+}
 }
 \keyword{anxiety,}
 \keyword{dass-21}

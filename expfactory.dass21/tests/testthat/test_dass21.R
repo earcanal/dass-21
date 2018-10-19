@@ -1,10 +1,8 @@
-library(tidyverse)
 context('DASS-21')
 
 df <- expfactory::process_expfactory_survey(token='1',
                                             survey='tests/fixtures/dass-21-results.json',
-                                            flat=FALSE) %>%
-  rename(p = Token)
+                                            flat=FALSE) %>% dplyr::rename(p = Token)
 test_that("process_expfactory_survey() can process JSON", {
   expect_is(df, 'data.frame')
 })
