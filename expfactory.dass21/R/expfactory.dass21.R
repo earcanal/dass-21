@@ -29,7 +29,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c('question'))
 #' @export
 #' @return Data frame
 dass21 <- function(df) {
-  df <- mutate(df, value = as.integer(df$value))
+  df <- mutate(df, value = as.integer(value))
   dass_total <- sum(df$value)  # dass21 total
 
   # Stress
