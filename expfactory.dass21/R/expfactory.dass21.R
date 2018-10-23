@@ -56,7 +56,7 @@ dass21 <- function(df) {
   anxiety <- df %>% filter(question %in% anxiety)
   dass21_anxiety <- sum(anxiety$value)
 
-  # Anxiety
+  # Depression
   depression <- c("I couldn't seem to experience any positive feeling at all",
                'I found it difficult to work up the initiative to do things',
                'I felt that I had nothing to look forward to',
