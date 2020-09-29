@@ -14,7 +14,7 @@ Data frame
 }
 \description{
 Calculates DASS-21 (Lovibond & Lovibond, 1995) scores.  Expects a data frame
-formatted by \code{\link[expfactoryr:process_expfactory_survey]{expfactoryr::process_expfactory_survey}}, containing
+formatted by \code{\link[expfactory:process_expfactory_survey]{expfactory::process_expfactory_survey}}, containing
 responses from a single participant. Participant id \emph{must} be in column \code{p}.
 }
 \examples{

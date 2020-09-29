@@ -4,7 +4,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c('question'))
 #' Calculate Depression Anxiety Stress Scales - 21 (DASS-21) scores
 #'
 #' Calculates DASS-21 (Lovibond & Lovibond, 1995) scores.  Expects a data frame
-#' formatted by \code{\link[expfactoryr:process_expfactory_survey]{expfactoryr::process_expfactory_survey}}, containing
+#' formatted by \code{\link[expfactory:process_expfactory_survey]{expfactory::process_expfactory_survey}}, containing
 #' responses from a single participant. Participant id \emph{must} be in column \code{p}.
 #'
 #' @examples
@@ -24,16 +24,18 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c('question'))
 #'}
 #' @param df Data frame
 #' @importFrom magrittr %>%
-#' @importFrom dplyr filter mutate do rowwise rename
+#' @importFrom dplyr filter mutate do rowwise rename select
+#' @importFrom rlang .data
+#' @importFrom tidyr pivot_wider
 #' @keywords depression, anxiety, stress, dass-21
 #' @export
 #' @return Data frame
 dass21 <- function(df) {
-  df <- mutate(df, value = as.integer(value))
+  df <- mutate(df, value = as.integer(.data$value))
   dass_total <- sum(df$value)  # dass21 total
 
   # Stress
-  stress <- c('I found it hard to wind down',
+  stress_q <- c('I found it hard to wind down',
             'I tended to over-react to situations',
             'I felt that I was using a lot of nervous energy ', # note trailing space
             'I found myself getting agitated',
@@ -41,23 +43,31 @@ dass21 <- function(df) {
             'I was intolerant of anything that kept me from getting on with what I was doing',
             'I felt that I was rather touchy'
             )
-  stress <- df %>% filter(question %in% stress)
-  dass21_stress <- sum(stress$value)
-
+  stress <- df %>%
+    filter(grepl(paste(stress_q, collapse="|"), .data$question)) %>%
+    select(.data$value) %>%
+    mutate(item = c(1, 6, 8, 11, 12, 14, 18)) %>%
+    pivot_wider(names_from = .data$item, values_from = .data$value, names_prefix = 'q')
+  stress <- stress %>% mutate(stress = rowSums(stress))
+  
   # Anxiety
-  anxiety <- c('I was aware of dryness of my mouth',
-            'I experienced breathing difficulty (e.g. excessively rapid breathing, breathlessness in the absence of physical exertion)',
-            'I experienced trembling (e.g. in the hands)',
+  anxiety_q <- c('I was aware of dryness of my mouth',
+            'I experienced breathing difficulty .e.g. excessively rapid breathing, breathlessness in the absence of physical exertion.',
+            'I experienced trembling .e.g. in the hands.',
             'I was worried about situations in which I might panic and make a fool of myself',
             'I felt I was close to panic ',
-            'I was aware of the action of my heart in the absence of physical exertion (e.g. sense of heart rate increase, heart missing a beat) ',
+            'I was aware of the action of my heart in the absence of physical exertion .e.g. sense of heart rate increase, heart missing a beat. ',
             'I felt scared without any good reason'
             )
-  anxiety <- df %>% filter(question %in% anxiety)
-  dass21_anxiety <- sum(anxiety$value)
+  anxiety <- df %>%
+    filter(grepl(paste(anxiety_q, collapse="|"), .data$question)) %>%
+    select(.data$value) %>%
+    mutate(item = c(2, 4, 7, 9, 15, 19, 20)) %>%
+    pivot_wider(names_from = .data$item, values_from = .data$value, names_prefix = 'q')
+  anxiety <- anxiety %>% mutate(anxiety = rowSums(anxiety))
 
   # Depression
-  depression <- c("I couldn't seem to experience any positive feeling at all",
+  depression_q <- c("I couldn't seem to experience any positive feeling at all",
                'I found it difficult to work up the initiative to do things',
                'I felt that I had nothing to look forward to',
                'I felt down-hearted and blue',
@@ -65,8 +75,12 @@ dass21 <- function(df) {
                "I felt I wasn't worth much as a person",
                'I felt that life was meaningless'
   )
-  depression <- df %>% filter(question %in% depression)
-  dass21_depression <- sum(depression$value)
-  
-  return(data.frame(p = df[1,'p'], dass21_stress, dass21_anxiety, dass21_depression))
+  depression <- df %>%
+    filter(grepl(paste(depression_q, collapse="|"), .data$question)) %>%
+    select(.data$value) %>%
+    mutate(item = c(3, 5, 10, 13, 16, 17, 21)) %>%
+    pivot_wider(names_from = .data$item, values_from = .data$value, names_prefix = 'q')
+  depression <- depression %>% mutate(depression = rowSums(depression))
+
+  return(data.frame(p = df[1,'p'], stress, anxiety, depression))
 }

@@ -11,11 +11,11 @@ test_that('DASS-21 JSON correctly parsed', {
 })
 dass21 <- dass21(df)
 test_that('DASS-21 anxiety score', {
-  expect_equal(dass21[1,'dass21_anxiety'], 11)
+  expect_equal(dass21[1,'anxiety'], 11)
 })
 test_that('DASS-21 stress score', {
-  expect_equal(dass21[1,'dass21_stress'], 12)
+  expect_equal(dass21[1,'stress'], 12)
 })
 test_that('DASS-21 depression score', {
-  expect_equal(dass21[1,'dass21_depression'], 9)
+  expect_equal(dass21[1,'depression'], 9)
 })
